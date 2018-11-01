@@ -13,19 +13,16 @@ namespace KCKGame
         static int right = 1;
         static int up = 2;
         static int down = 3;
-
-
+        
         static int firstPlayerScore = 0;
         static int firstPlayerDirection = right;
-        static int firstPlayerColumn = 0; // column
-        static int firstPlayerRow = 0; // row
-
+        static int firstPlayerColumn = 0;
+        static int firstPlayerRow = 0;
 
         static int secondPlayerScore = 0;
         static int secondPlayerDirection = left;
-        static int secondPlayerColumn = 40; // column
-        static int secondPlayerRow = 5; // row
-
+        static int secondPlayerColumn = 0;
+        static int secondPlayerRow = 0;
 
         static bool[,] isUsed;
 
@@ -37,7 +34,6 @@ namespace KCKGame
 
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
 
-
             while (true)
             {
                 if (Console.KeyAvailable)
@@ -46,13 +42,10 @@ namespace KCKGame
                     ChangePlayerDirection(key);
                 }
 
-
                 MovePlayers();
-
 
                 bool firstPlayerLoses = DoesPlayerLose(firstPlayerRow, firstPlayerColumn);
                 bool secondPlayerLoses = DoesPlayerLose(secondPlayerRow, secondPlayerColumn);
-
 
                 if (firstPlayerLoses && secondPlayerLoses)
                 {
@@ -83,26 +76,36 @@ namespace KCKGame
                     ResetGame();
                 }
 
-
                 isUsed[firstPlayerColumn, firstPlayerRow] = true;
                 isUsed[secondPlayerColumn, secondPlayerRow] = true;
 
-
                 WriteOnPosition(firstPlayerColumn, firstPlayerRow, '*', ConsoleColor.Yellow);
-                WriteOnPosition(secondPlayerColumn, secondPlayerRow, '*', ConsoleColor.Cyan);
-
+                WriteOnPosition(secondPlayerColumn, secondPlayerRow, '*', ConsoleColor.Red);
 
                 Thread.Sleep(100);
             }
         }
 
+        static void SetGameField()
+        {
+            Console.WindowHeight = 30;
+            Console.BufferHeight = 30;
+
+            Console.WindowWidth = 100;
+            Console.BufferWidth = 100;
+
+            firstPlayerColumn = 0;
+            firstPlayerRow = Console.WindowHeight / 2;
+
+            secondPlayerColumn = Console.WindowWidth - 1;
+            secondPlayerRow = Console.WindowHeight / 2;
+        }
 
         static void StartupScreen()
         {
-            string heading = "A simple tron-like game";
+            string heading = "A simple Janeq-like game";
             Console.CursorLeft = Console.BufferWidth / 2 - heading.Length / 2;
             Console.WriteLine(heading);
-
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Player 1's controls:\n");
@@ -115,7 +118,7 @@ namespace KCKGame
             int cursorLeft = Console.BufferWidth - longestString.Length;
 
             Console.CursorTop = 1;
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.CursorLeft = cursorLeft;
             Console.WriteLine("Player 2's controls:");
             Console.CursorLeft = cursorLeft;
@@ -130,119 +133,6 @@ namespace KCKGame
             Console.ReadKey();
             Console.Clear();
         }
-        static void ResetGame()
-        {
-            isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
-            SetGameField();
-            firstPlayerDirection = right;
-            secondPlayerDirection = left;
-            Console.WriteLine("Press any key to start again...");
-            Console.ReadKey();
-            Console.Clear();
-            MovePlayers();
-        }
-
-
-        static bool DoesPlayerLose(int row, int col)
-        {
-            if (row < 0)
-            {
-                return true;
-            }
-            if (col < 0)
-            {
-                return true;
-            }
-            if (row >= Console.WindowHeight)
-            {
-                return true;
-            }
-            if (col >= Console.WindowWidth)
-            {
-                return true;
-            }
-
-
-            if (isUsed[col, row])
-            {
-                return true;
-            }
-
-
-            return false;
-        }
-
-
-        static void SetGameField()
-        {
-            Console.WindowHeight = 30;
-            Console.BufferHeight = 30;
-
-
-            Console.WindowWidth = 100;
-            Console.BufferWidth = 100;
-
-
-            /*
-             * 
-             * ->>>>            <<<<-
-             * 
-             */
-            firstPlayerColumn = 0;
-            firstPlayerRow = Console.WindowHeight / 2;
-
-
-            secondPlayerColumn = Console.WindowWidth - 1;
-            secondPlayerRow = Console.WindowHeight / 2;
-        }
-
-
-        static void MovePlayers()
-        {
-            if (firstPlayerDirection == right)
-            {
-                firstPlayerColumn++;
-            }
-            if (firstPlayerDirection == left)
-            {
-                firstPlayerColumn--;
-            }
-            if (firstPlayerDirection == up)
-            {
-                firstPlayerRow--;
-            }
-            if (firstPlayerDirection == down)
-            {
-                firstPlayerRow++;
-            }
-
-
-            if (secondPlayerDirection == right)
-            {
-                secondPlayerColumn++;
-            }
-            if (secondPlayerDirection == left)
-            {
-                secondPlayerColumn--;
-            }
-            if (secondPlayerDirection == up)
-            {
-                secondPlayerRow--;
-            }
-            if (secondPlayerDirection == down)
-            {
-                secondPlayerRow++;
-            }
-        }
-
-
-        static void WriteOnPosition(int x, int y, char ch, ConsoleColor color)
-        {
-            Console.ForegroundColor = color;
-            Console.SetCursorPosition(x, y);
-            Console.Write(ch);
-        }
-
 
         static void ChangePlayerDirection(ConsoleKeyInfo key)
         {
@@ -263,7 +153,6 @@ namespace KCKGame
                 firstPlayerDirection = down;
             }
 
-
             if (key.Key == ConsoleKey.UpArrow && secondPlayerDirection != down)
             {
                 secondPlayerDirection = up;
@@ -280,6 +169,89 @@ namespace KCKGame
             {
                 secondPlayerDirection = down;
             }
+        }
+
+        static void MovePlayers()
+        {
+            if (firstPlayerDirection == right)
+            {
+                firstPlayerColumn++;
+            }
+            if (firstPlayerDirection == left)
+            {
+                firstPlayerColumn--;
+            }
+            if (firstPlayerDirection == up)
+            {
+                firstPlayerRow--;
+            }
+            if (firstPlayerDirection == down)
+            {
+                firstPlayerRow++;
+            }
+
+            if (secondPlayerDirection == right)
+            {
+                secondPlayerColumn++;
+            }
+            if (secondPlayerDirection == left)
+            {
+                secondPlayerColumn--;
+            }
+            if (secondPlayerDirection == up)
+            {
+                secondPlayerRow--;
+            }
+            if (secondPlayerDirection == down)
+            {
+                secondPlayerRow++;
+            }
+        }
+
+        static bool DoesPlayerLose(int row, int col)
+        {
+            if (row < 0)
+            {
+                return true;
+            }
+            if (col < 0)
+            {
+                return true;
+            }
+            if (row >= Console.WindowHeight)
+            {
+                return true;
+            }
+            if (col >= Console.WindowWidth)
+            {
+                return true;
+            }
+
+            if (isUsed[col, row])
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        static void ResetGame()
+        {
+            isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
+            SetGameField();
+            firstPlayerDirection = right;
+            secondPlayerDirection = left;
+            Console.WriteLine("Press any key to start again...");
+            Console.ReadKey();
+            Console.Clear();
+            MovePlayers();
+        }
+
+        static void WriteOnPosition(int x, int y, char ch, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.SetCursorPosition(x, y);
+            Console.Write(ch);
         }
     }
 }
