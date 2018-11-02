@@ -28,7 +28,6 @@ namespace KCKGame
 
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;
             SetGameField();
             StartupScreen();
 
@@ -101,13 +100,75 @@ namespace KCKGame
             secondPlayerRow = Console.WindowHeight / 2;
         }
 
+        static void Heading()
+        {
+            string heading = "██╗  ██╗ ██████╗██╗  ██╗     ██████╗  █████╗ ███╗   ███╗███████╗";
+            int cursorLeft = Console.BufferWidth / 2 - heading.Length / 2;
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.CursorTop = 1;
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine(heading);
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("██║ ██╔╝██╔════╝██║ ██╔╝    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("█████╔╝ ██║     █████╔╝     ██║  ███╗███████║██╔████╔██║█████╗  ");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("██╔═██╗ ██║     ██╔═██╗     ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("██║  ██╗╚██████╗██║  ██╗    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝");
+        }
+
         static void StartupScreen()
         {
-            string heading = "A simple Janeq-like game";
-            Console.CursorLeft = Console.BufferWidth / 2 - heading.Length / 2;
-            Console.WriteLine(heading);
+            Console.CursorVisible = false;
+            ConsoleKeyInfo key;
+            int currentSelection = 0;
+            string[] options = { "start", "sterowanie", "o autorach", "koniec" }; 
+
+            do
+            {
+                Console.Clear();
+                Heading();
+
+                Console.CursorTop = 10;
+                Console.ResetColor();
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.CursorLeft = Console.BufferWidth / 2 - options[i].Length / 2;
+
+                    if (i == currentSelection)
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                    Console.WriteLine(options[i].ToUpper());
+                    Console.ResetColor();
+                }
+
+                key = Console.ReadKey(true);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        {
+                            if (currentSelection < options.Length-1)
+                                currentSelection++;
+                            break;
+                        }
+                    case ConsoleKey.UpArrow:
+                        {
+                            if (currentSelection > 0)
+                                currentSelection--;
+                            break;
+                        }
+                }
+
+            } while (key.Key != ConsoleKey.Enter);
 
             Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.CursorTop = 8;
             Console.WriteLine("Player 1's controls:\n");
             Console.WriteLine("W - Up");
             Console.WriteLine("A - Left");
@@ -117,8 +178,8 @@ namespace KCKGame
             string longestString = "Player 2's controls:";
             int cursorLeft = Console.BufferWidth - longestString.Length;
 
-            Console.CursorTop = 1;
             Console.ForegroundColor = ConsoleColor.Red;
+            Console.CursorTop = 8;
             Console.CursorLeft = cursorLeft;
             Console.WriteLine("Player 2's controls:");
             Console.CursorLeft = cursorLeft;
