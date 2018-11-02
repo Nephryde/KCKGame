@@ -9,10 +9,10 @@ namespace KCKGame
 {
     class Program
     {
-        static int left = 0;
-        static int right = 1;
-        static int up = 2;
-        static int down = 3;
+        static readonly int left = 0;
+        static readonly int right = 1;
+        static readonly int up = 2;
+        static readonly int down = 3;
         
         static int firstPlayerScore = 0;
         static int firstPlayerDirection = right;
@@ -29,7 +29,121 @@ namespace KCKGame
         static void Main(string[] args)
         {
             SetGameField();
-            StartupScreen();
+
+            int option = Menu();
+
+            while (option != 3)
+            {
+                switch (option)
+                {
+                    case 0:
+                        {
+                            MenuStart();
+                            break;
+                        }
+                    case 1:
+                        {
+                            MenuControl();
+                            break;
+                        }
+                    case 2:
+                        {
+                            MenuAuthors();
+                            break;
+                        }
+                }
+
+                option = Menu();
+            }
+        }
+
+        static void SetGameField()
+        {
+            Console.WindowHeight = 30;
+            Console.BufferHeight = 30;
+
+            Console.WindowWidth = 100;
+            Console.BufferWidth = 100;
+
+            firstPlayerColumn = 0;
+            firstPlayerRow = Console.WindowHeight / 2;
+
+            secondPlayerColumn = Console.WindowWidth - 1;
+            secondPlayerRow = Console.WindowHeight / 2;
+        }
+
+        static void Heading()
+        {
+            string heading = "██╗  ██╗ ██████╗██╗  ██╗     ██████╗  █████╗ ███╗   ███╗███████╗";
+            int cursorLeft = Console.BufferWidth / 2 - heading.Length / 2;
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.CursorTop = 1;
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine(heading);
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("██║ ██╔╝██╔════╝██║ ██╔╝    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("█████╔╝ ██║     █████╔╝     ██║  ███╗███████║██╔████╔██║█████╗  ");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("██╔═██╗ ██║     ██╔═██╗     ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("██║  ██╗╚██████╗██║  ██╗    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝");
+        }
+
+        static int Menu()
+        {
+            Console.CursorVisible = false;
+            ConsoleKeyInfo key;
+            int currentSelection = 0;
+            string[] options = { "start", "sterowanie", "o autorach", "koniec" }; 
+
+            do
+            {
+                Heading();
+
+                Console.CursorTop = 10;
+                Console.ResetColor();
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.CursorLeft = Console.BufferWidth / 2 - options[i].Length / 2;
+
+                    if (i == currentSelection)
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                    Console.WriteLine(options[i].ToUpper());
+                    Console.ResetColor();
+                }
+
+                key = Console.ReadKey(true);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        {
+                            if (currentSelection < options.Length-1)
+                                currentSelection++;
+                            break;
+                        }
+                    case ConsoleKey.UpArrow:
+                        {
+                            if (currentSelection > 0)
+                                currentSelection--;
+                            break;
+                        }
+                }
+
+            } while (key.Key != ConsoleKey.Enter);
+
+            return currentSelection;
+        }
+
+        static void MenuStart()
+        {
+            Console.Clear();
 
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
 
@@ -85,114 +199,79 @@ namespace KCKGame
             }
         }
 
-        static void SetGameField()
+        static void MenuReturn()
         {
-            Console.WindowHeight = 30;
-            Console.BufferHeight = 30;
+            string retstring = "Naciśnij dowolny klawisz aby wrocić do menu...";
 
-            Console.WindowWidth = 100;
-            Console.BufferWidth = 100;
-
-            firstPlayerColumn = 0;
-            firstPlayerRow = Console.WindowHeight / 2;
-
-            secondPlayerColumn = Console.WindowWidth - 1;
-            secondPlayerRow = Console.WindowHeight / 2;
-        }
-
-        static void Heading()
-        {
-            string heading = "██╗  ██╗ ██████╗██╗  ██╗     ██████╗  █████╗ ███╗   ███╗███████╗";
-            int cursorLeft = Console.BufferWidth / 2 - heading.Length / 2;
-
+            Console.CursorLeft = Console.BufferWidth / 2 - retstring.Length / 2;
+            Console.CursorTop = Console.BufferHeight - 5;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.CursorTop = 1;
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine(heading);
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("██║ ██╔╝██╔════╝██║ ██╔╝    ██╔════╝ ██╔══██╗████╗ ████║██╔════╝");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("█████╔╝ ██║     █████╔╝     ██║  ███╗███████║██╔████╔██║█████╗  ");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("██╔═██╗ ██║     ██╔═██╗     ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝  ");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("██║  ██╗╚██████╗██║  ██╗    ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝     ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝");
-        }
 
-        static void StartupScreen()
-        {
-            Console.CursorVisible = false;
-            ConsoleKeyInfo key;
-            int currentSelection = 0;
-            string[] options = { "start", "sterowanie", "o autorach", "koniec" }; 
-
-            do
-            {
-                Console.Clear();
-                Heading();
-
-                Console.CursorTop = 10;
-                Console.ResetColor();
-
-                for (int i = 0; i < options.Length; i++)
-                {
-                    Console.CursorLeft = Console.BufferWidth / 2 - options[i].Length / 2;
-
-                    if (i == currentSelection)
-                        Console.ForegroundColor = ConsoleColor.Red;
-
-                    Console.WriteLine(options[i].ToUpper());
-                    Console.ResetColor();
-                }
-
-                key = Console.ReadKey(true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.DownArrow:
-                        {
-                            if (currentSelection < options.Length-1)
-                                currentSelection++;
-                            break;
-                        }
-                    case ConsoleKey.UpArrow:
-                        {
-                            if (currentSelection > 0)
-                                currentSelection--;
-                            break;
-                        }
-                }
-
-            } while (key.Key != ConsoleKey.Enter);
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.CursorTop = 8;
-            Console.WriteLine("Player 1's controls:\n");
-            Console.WriteLine("W - Up");
-            Console.WriteLine("A - Left");
-            Console.WriteLine("S - Down");
-            Console.WriteLine("D - Right");
-
-            string longestString = "Player 2's controls:";
-            int cursorLeft = Console.BufferWidth - longestString.Length;
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.CursorTop = 8;
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("Player 2's controls:");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("Up Arrow - Up");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("Left Arrow - Left");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("Down Arrow - Down");
-            Console.CursorLeft = cursorLeft;
-            Console.WriteLine("Right Arrow - Right");
+            Console.WriteLine(retstring);
 
             Console.ReadKey();
             Console.Clear();
+        }
+
+        static void MenuControl()
+        {
+            Console.Clear();
+            Heading();
+
+            int x = 15;
+
+            int cursorLeft = x;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.CursorTop = 10;
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Gracz 1 - poruszanie się:\n");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("W - góra");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("S - dół");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("A - lewo");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("D - prawo");
+
+            string longestString = "Gracz 2 - poruszanie się:";
+            cursorLeft = Console.BufferWidth - longestString.Length - x;
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.CursorTop = 10;
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine(longestString+"\n");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Up Arrow - góra");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Down Arrow - dół");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Left Arrow - lewo");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Right Arrow - prawo");
+
+            MenuReturn();
+        }
+        
+        static void MenuAuthors()
+        {
+            Console.Clear();
+            Heading();
+
+            string text = "Projekt wykonali:";
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.CursorTop = 10;
+            int cursorLeft = Console.BufferWidth / 2 - text.Length / 2;
+
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine(text+"\n");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Janeq Gierasimiuk");
+            Console.CursorLeft = cursorLeft;
+            Console.WriteLine("Kamil Dołęgiewicz");
+
+            MenuReturn();
         }
 
         static void ChangePlayerDirection(ConsoleKeyInfo key)
