@@ -146,8 +146,23 @@ namespace KCKGame
             Console.Clear();
 
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
+            firstPlayerScore = 0;
+            secondPlayerScore = 0;
 
-            while (true)
+            string startText = "Naciśnij dowolny klawisz, żeby zacząć rozgrywkę.";
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.CursorTop = Console.WindowHeight / 2;
+            Console.CursorLeft = Console.WindowWidth / 2 - startText.Length / 2;
+            Console.WriteLine(startText);
+
+            Console.ReadKey();
+            Console.Clear();
+
+            int totalRoundNumber = 5;
+            int roundNumber = 1;
+            string[] text = { "Koniec rundy x", "", "Wynik: x - x"};
+
+            while (roundNumber <= totalRoundNumber)
             {
                 if (Console.KeyAvailable)
                 {
@@ -160,48 +175,111 @@ namespace KCKGame
                 bool firstPlayerLoses = DoesPlayerLose(firstPlayerRow, firstPlayerColumn);
                 bool secondPlayerLoses = DoesPlayerLose(secondPlayerRow, secondPlayerColumn);
 
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
                 if (firstPlayerLoses && secondPlayerLoses)
                 {
                     firstPlayerScore++;
                     secondPlayerScore++;
-                    Console.WriteLine();
-                    Console.WriteLine("Game over");
-                    Console.WriteLine("Draw game!!!");
-                    Console.WriteLine("Current score: {0} - {1}", firstPlayerScore, secondPlayerScore);
-                    ResetGame();
+
+                    text[1] = "Remis!!!";
+                    Console.CursorTop = 1;
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[0].Length / 2;
+                    Console.WriteLine("Koniec rundy {0}", roundNumber);
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[1].Length / 2;
+                    Console.WriteLine(text[1]);
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
+                    Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
+
+                    ResetGame(ref roundNumber);
                 }
-                if (firstPlayerLoses)
+                else if (firstPlayerLoses)
                 {
                     secondPlayerScore++;
-                    Console.WriteLine();
-                    Console.WriteLine("Game over");
-                    Console.WriteLine("Second player wins!!!");
-                    Console.WriteLine("Current score: {0} - {1}", firstPlayerScore, secondPlayerScore);
-                    ResetGame();
+
+                    text[1] = "Wygrywa gracz po prawej!";
+                    Console.CursorTop = 1;
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[0].Length / 2;
+                    Console.WriteLine("Koniec rundy {0}", roundNumber);
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[1].Length / 2;
+                    Console.WriteLine(text[1]);
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
+                    Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
+
+                    ResetGame(ref roundNumber);
                 }
-                if (secondPlayerLoses)
+                else if (secondPlayerLoses)
                 {
                     firstPlayerScore++;
-                    Console.WriteLine();
-                    Console.WriteLine("Game over");
-                    Console.WriteLine("First player wins!!!");
-                    Console.WriteLine("Current score: {0} - {1}", firstPlayerScore, secondPlayerScore);
-                    ResetGame();
+
+                    text[1] = "Wygrywa gracz po lewej!";
+                    Console.CursorTop = 1;
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[0].Length / 2;
+                    Console.WriteLine("Koniec rundy {0}", roundNumber);
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[1].Length / 2;
+                    Console.WriteLine(text[1]);
+                    Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
+                    Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
+
+                    ResetGame(ref roundNumber);
                 }
 
                 isUsed[firstPlayerColumn, firstPlayerRow] = true;
                 isUsed[secondPlayerColumn, secondPlayerRow] = true;
 
-                WriteOnPosition(firstPlayerColumn, firstPlayerRow, '*', ConsoleColor.Yellow);
+                WriteOnPosition(firstPlayerColumn, firstPlayerRow, '*', ConsoleColor.Blue);
                 WriteOnPosition(secondPlayerColumn, secondPlayerRow, '*', ConsoleColor.Red);
 
                 Thread.Sleep(100);
             }
+
+            string[] endText = { "Koniec gry", "", "Wynik: x - x", "Naciśnij dowolny klawisz, aby wrócić do menu..." };
+
+            if (firstPlayerScore == secondPlayerScore)
+            {
+                endText[1] = "Remis!!!";
+                Console.CursorTop = 1;
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[0].Length / 2;
+                Console.WriteLine(endText[0]);
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[1].Length / 2;
+                Console.WriteLine(endText[1]);
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[2].Length / 2;
+                Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
+            }
+            else if (firstPlayerScore > secondPlayerScore)
+            {
+                endText[1] = "Wygrał gracz po lewej!";
+                Console.CursorTop = 1;
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[0].Length / 2;
+                Console.WriteLine(endText[0]);
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[1].Length / 2;
+                Console.WriteLine(endText[1]);
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[2].Length / 2;
+                Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
+            }
+            else if (firstPlayerScore < secondPlayerScore)
+            {
+                endText[1] = "Wygrał gracz po prawej!";
+                Console.CursorTop = 1;
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[0].Length / 2;
+                Console.WriteLine(endText[0]);
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[1].Length / 2;
+                Console.WriteLine(endText[1]);
+                Console.CursorLeft = Console.WindowWidth / 2 - endText[2].Length / 2;
+                Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
+            }
+
+            Console.CursorLeft = Console.WindowWidth / 2 - endText[3].Length / 2;
+            Console.WriteLine(endText[3]);
+
+            Console.ReadKey();
+            Thread.Sleep(500);
+            Console.Clear();
         }
 
         static void MenuReturn()
         {
-            string retstring = "Naciśnij dowolny klawisz aby wrocić do menu...";
+            string retstring = "Naciśnij dowolny klawisz, aby wrocić do menu...";
 
             Console.CursorLeft = Console.BufferWidth / 2 - retstring.Length / 2;
             Console.CursorTop = Console.BufferHeight - 5;
@@ -375,15 +453,22 @@ namespace KCKGame
             return false;
         }
 
-        static void ResetGame()
+        static void ResetGame(ref int roundNumber)
         {
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
             SetGameField();
             firstPlayerDirection = right;
             secondPlayerDirection = left;
-            Console.WriteLine("Press any key to start again...");
+
+            string text = "Naciśnij dowolny klawisz, żeby zacząć od nowa...";
+            Console.CursorLeft = Console.WindowWidth / 2 - text.Length / 2;
+            Console.WriteLine(text);
+            roundNumber++;
+
             Console.ReadKey();
+            Thread.Sleep(250);
             Console.Clear();
+
             MovePlayers();
         }
 
