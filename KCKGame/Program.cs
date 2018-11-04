@@ -50,7 +50,25 @@ namespace KCKGame
                 {
                     case 0:
                         {
-                            MenuStart();
+                            int gameModeOption = GameMenu();
+
+                            while(gameModeOption != 2)
+                            {
+                                switch(gameModeOption)
+                                {
+                                    case 0:
+                                        {
+                                            Game("obstacles");
+                                            break;
+                                        }
+                                    case 1:
+                                        {
+                                            Game("speed");
+                                            break;
+                                        }
+                                }
+                                gameModeOption = GameMenu();
+                            }
                             break;
                         }
                     case 1:
@@ -107,6 +125,7 @@ namespace KCKGame
 
         static int Menu()
         {
+            Console.Clear();
             Console.CursorVisible = false;
             ConsoleKeyInfo key;
             int currentSelection = 0;
@@ -153,7 +172,56 @@ namespace KCKGame
             return currentSelection;
         }
 
-        static void MenuStart()
+        static int GameMenu()
+        {
+            Console.Clear();
+            Console.CursorVisible = false;
+            ConsoleKeyInfo key;
+            int currentSelection = 0;
+            string[] options = { "tryb przeszkód", "tryb czas", "powrót" };
+
+            do
+            {
+                Heading();
+
+                Console.CursorTop = 10;
+                Console.ResetColor();
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    Console.CursorLeft = Console.BufferWidth / 2 - options[i].Length / 2;
+
+                    if (i == currentSelection)
+                        Console.ForegroundColor = ConsoleColor.Red;
+
+                    Console.WriteLine(options[i].ToUpper());
+                    Console.ResetColor();
+                }
+
+                key = Console.ReadKey(true);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.DownArrow:
+                        {
+                            if (currentSelection < options.Length - 1)
+                                currentSelection++;
+                            break;
+                        }
+                    case ConsoleKey.UpArrow:
+                        {
+                            if (currentSelection > 0)
+                                currentSelection--;
+                            break;
+                        }
+                }
+
+            } while (key.Key != ConsoleKey.Enter);
+
+            return currentSelection;
+        }
+
+        static void Game(string level)
         {
 
             Console.Clear();
@@ -173,9 +241,10 @@ namespace KCKGame
 
             int totalRoundNumber = 10;
             int roundNumber = 1;
+            int temp = 0;
 
-
-            MakeObstacles(roundNumber);
+            if(level == "obstacles")
+                MakeObstacles(roundNumber);
 
 
             string[] text = { "Koniec rundy x", "", "Wynik: x - x"};
@@ -209,7 +278,7 @@ namespace KCKGame
                     Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
                     Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
 
-                    ResetGame(ref roundNumber);
+                    ResetGame(ref roundNumber, ref level);
                 }
                 else if (firstPlayerLoses)
                 {
@@ -224,7 +293,7 @@ namespace KCKGame
                     Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
                     Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
 
-                    ResetGame(ref roundNumber);
+                    ResetGame(ref roundNumber, ref level);
                 }
                 else if (secondPlayerLoses)
                 {
@@ -239,27 +308,49 @@ namespace KCKGame
                     Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
                     Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
 
-                    ResetGame(ref roundNumber);
-                }
-
-                
+                    ResetGame(ref roundNumber, ref level);
+                }               
 
                 isUsed[firstPlayerColumn, firstPlayerRow] = true;
                 isUsed[secondPlayerColumn, secondPlayerRow] = true;
 
                 WriteSnakeHead();
                 
-
                 WriteOnPosition(firstPlayerColumn, firstPlayerRow, '°', ConsoleColor.DarkCyan);
                 WriteOnPosition(secondPlayerColumn, secondPlayerRow, '°', ConsoleColor.Green);
 
-                Thread.Sleep(100);
+                if(level == "speed")
+                {
+                    if(roundNumber == 1)
+                        Thread.Sleep(80);
+                    if (roundNumber == 2)
+                        Thread.Sleep(70);
+                    if (roundNumber == 3)
+                        Thread.Sleep(60);
+                    if (roundNumber == 4)
+                        Thread.Sleep(50);
+                    if (roundNumber == 5)
+                        Thread.Sleep(45);
+                    if (roundNumber == 6)
+                        Thread.Sleep(40);
+                    if (roundNumber == 7)
+                        Thread.Sleep(35);
+                    if (roundNumber == 8)
+                        Thread.Sleep(30);
+                    if (roundNumber == 9)
+                        Thread.Sleep(25);
+                    if (roundNumber == 10)
+                        Thread.Sleep(20);
+                }
+                else
+                    Thread.Sleep(100);
             }
 
             string[] endText = { "Koniec gry", "", "Wynik: x - x", "Naciśnij dowolny klawisz, aby wrócić do menu..." };
 
             if (firstPlayerScore == secondPlayerScore)
             {
+                Console.Clear();
                 endText[1] = "Remis!!!";
                 Console.CursorTop = 1;
                 Console.CursorLeft = Console.WindowWidth / 2 - endText[0].Length / 2;
@@ -271,6 +362,7 @@ namespace KCKGame
             }
             else if (firstPlayerScore > secondPlayerScore)
             {
+                Console.Clear();
                 endText[1] = "Wygrał gracz po lewej!";
                 Console.CursorTop = 1;
                 Console.CursorLeft = Console.WindowWidth / 2 - endText[0].Length / 2;
@@ -282,6 +374,7 @@ namespace KCKGame
             }
             else if (firstPlayerScore < secondPlayerScore)
             {
+                Console.Clear();
                 endText[1] = "Wygrał gracz po prawej!";
                 Console.CursorTop = 1;
                 Console.CursorLeft = Console.WindowWidth / 2 - endText[0].Length / 2;
@@ -299,6 +392,8 @@ namespace KCKGame
             Thread.Sleep(500);
             Console.Clear();
         }
+
+        
 
         static void MenuReturn()
         {
@@ -496,7 +591,7 @@ namespace KCKGame
             }
         }
 
-        static void ResetGame(ref int roundNumber)
+        static void ResetGame(ref int roundNumber, ref string level)
         {
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
             SetGameField();
@@ -513,7 +608,9 @@ namespace KCKGame
             Thread.Sleep(250);
             Console.Clear();
 
-            MakeObstacles(roundNumber);
+            if(level == "obstacles")
+                MakeObstacles(roundNumber);
+
             MovePlayers();
         }
 
