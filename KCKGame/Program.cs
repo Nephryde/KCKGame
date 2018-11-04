@@ -11,12 +11,14 @@ namespace KCKGame
     {
         public int row;
         public int col;
+
         public Position(int row, int col)
         {
             this.row = row;
             this.col = col;
         }
     }
+
     class Program
     {
         static readonly int left = 0;
@@ -36,17 +38,15 @@ namespace KCKGame
 
         static bool[,] isUsed;
 
-        
-
         static void Main(string[] args)
         {
             SetGameField();
 
-            int option = Menu();
+            int menuOption = Menu();
 
-            while (option != 3)
+            while (menuOption != 3)
             {
-                switch (option)
+                switch (menuOption)
                 {
                     case 0:
                         {
@@ -67,6 +67,7 @@ namespace KCKGame
                                             break;
                                         }
                                 }
+
                                 gameModeOption = GameMenu();
                             }
                             break;
@@ -83,7 +84,7 @@ namespace KCKGame
                         }
                 }
 
-                option = Menu();
+                menuOption = Menu();
             }
         }
 
@@ -223,7 +224,6 @@ namespace KCKGame
 
         static void Game(string level)
         {
-
             Console.Clear();
 
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
@@ -241,11 +241,9 @@ namespace KCKGame
 
             int totalRoundNumber = 10;
             int roundNumber = 1;
-            int temp = 0;
 
-            if(level == "obstacles")
+            if (level == "obstacles")
                 MakeObstacles(roundNumber);
-
 
             string[] text = { "Koniec rundy x", "", "Wynik: x - x"};
 
@@ -278,7 +276,7 @@ namespace KCKGame
                     Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
                     Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
 
-                    ResetGame(ref roundNumber, ref level);
+                    ResetGame(ref roundNumber, level);
                 }
                 else if (firstPlayerLoses)
                 {
@@ -293,7 +291,7 @@ namespace KCKGame
                     Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
                     Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
 
-                    ResetGame(ref roundNumber, ref level);
+                    ResetGame(ref roundNumber, level);
                 }
                 else if (secondPlayerLoses)
                 {
@@ -308,7 +306,7 @@ namespace KCKGame
                     Console.CursorLeft = Console.WindowWidth / 2 - text[2].Length / 2;
                     Console.WriteLine("Wynik: {0} - {1}\n", firstPlayerScore, secondPlayerScore);
 
-                    ResetGame(ref roundNumber, ref level);
+                    ResetGame(ref roundNumber, level);
                 }               
 
                 isUsed[firstPlayerColumn, firstPlayerRow] = true;
@@ -321,32 +319,36 @@ namespace KCKGame
 
                 if(level == "speed")
                 {
-                    if(roundNumber == 1)
-                        Thread.Sleep(80);
-                    if (roundNumber == 2)
-                        Thread.Sleep(70);
-                    if (roundNumber == 3)
-                        Thread.Sleep(60);
-                    if (roundNumber == 4)
-                        Thread.Sleep(50);
-                    if (roundNumber == 5)
-                        Thread.Sleep(45);
-                    if (roundNumber == 6)
-                        Thread.Sleep(40);
-                    if (roundNumber == 7)
-                        Thread.Sleep(35);
-                    if (roundNumber == 8)
-                        Thread.Sleep(30);
-                    if (roundNumber == 9)
-                        Thread.Sleep(25);
-                    if (roundNumber == 10)
-                        Thread.Sleep(20);
+                    switch(roundNumber)
+                    {
+                        case 1:
+                            Thread.Sleep(80); break;
+                        case 2:
+                            Thread.Sleep(70); break;
+                        case 3:
+                            Thread.Sleep(60); break;
+                        case 4:
+                            Thread.Sleep(50); break;
+                        case 5:
+                            Thread.Sleep(45); break;
+                        case 6:
+                            Thread.Sleep(40); break;
+                        case 7:
+                            Thread.Sleep(35); break;
+                        case 8:
+                            Thread.Sleep(30); break;
+                        case 9:
+                            Thread.Sleep(25); break;
+                        case 10:
+                            Thread.Sleep(20); break;
+                    }
                 }
                 else
                     Thread.Sleep(100);
             }
 
             string[] endText = { "Koniec gry", "", "Wynik: x - x", "Naciśnij dowolny klawisz, aby wrócić do menu..." };
+            Console.ForegroundColor = ConsoleColor.Red;
 
             if (firstPlayerScore == secondPlayerScore)
             {
@@ -397,13 +399,13 @@ namespace KCKGame
 
         static void MenuReturn()
         {
-            string retstring = "Naciśnij dowolny klawisz, aby wrocić do menu...";
+            string retString = "Naciśnij dowolny klawisz, aby wrocić do menu...";
 
-            Console.CursorLeft = Console.BufferWidth / 2 - retstring.Length / 2;
+            Console.CursorLeft = Console.BufferWidth / 2 - retString.Length / 2;
             Console.CursorTop = Console.BufferHeight - 5;
             Console.ForegroundColor = ConsoleColor.Red;
 
-            Console.WriteLine(retstring);
+            Console.WriteLine(retString);
 
             Console.ReadKey();
             Console.Clear();
@@ -575,23 +577,20 @@ namespace KCKGame
         {
             Random random = new Random();
 
-            for (int i = 1; i <= roundNumber+10; i++)
+            for (int i = 1; i <= roundNumber*2+5; i++)
             {
-                int randomRow = random.Next(3, Console.WindowHeight - 4);
-                int randomColumn = random.Next(10, Console.WindowWidth - 13);
+                int randomRow = random.Next(4, Console.WindowHeight - 4);
+                int randomColumn = random.Next(13, Console.WindowWidth - 13);
 
                 isUsed[randomColumn, randomRow] = true;
                 isUsed[randomColumn+1, randomRow] = true;
-                isUsed[randomColumn, randomRow+1] = true;
-                isUsed[randomColumn+1, randomRow+1] = true;
+
                 WriteOnPosition(randomColumn, randomRow, '▓', ConsoleColor.Red);
                 WriteOnPosition(randomColumn+1, randomRow, '▓', ConsoleColor.Red);
-                WriteOnPosition(randomColumn, randomRow+1, '▓', ConsoleColor.Red);
-                WriteOnPosition(randomColumn+1, randomRow+1, '▓', ConsoleColor.Red);
             }
         }
 
-        static void ResetGame(ref int roundNumber, ref string level)
+        static void ResetGame(ref int roundNumber, string level)
         {
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
             SetGameField();
@@ -608,7 +607,7 @@ namespace KCKGame
             Thread.Sleep(250);
             Console.Clear();
 
-            if(level == "obstacles")
+            if(level == "obstacles" && roundNumber < 10)
                 MakeObstacles(roundNumber);
 
             MovePlayers();
@@ -616,23 +615,20 @@ namespace KCKGame
 
         static void WriteOnPosition(int x, int y, char ch, ConsoleColor color)
         {
-
             Console.ForegroundColor = color;
             Console.SetCursorPosition(x, y);
             Console.Write(ch);
-
-            
         }
 
         static void WriteSnakeHead()
         {
             Position[] directions = new Position[]
-                {
-                    new Position(0, 1), // right
-                    new Position(0, -1), // left
-                    new Position(1, 0), // down
-                    new Position(-1, 0), // up
-                };
+            {
+                new Position(0, 1), // right
+                new Position(0, -1), // left
+                new Position(1, 0), // down
+                new Position(-1, 0), // up
+            };
 
             Position firstSnakeHead = new Position(firstPlayerRow, firstPlayerColumn);
             Position firstPlayerNextDirection = directions[firstPlayerDirection];
@@ -654,6 +650,5 @@ namespace KCKGame
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.Write('°');
         }
-        
     }
 }
