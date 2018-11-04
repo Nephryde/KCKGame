@@ -160,6 +160,9 @@ namespace KCKGame
 
             int totalRoundNumber = 5;
             int roundNumber = 1;
+
+            MakeObstacles(roundNumber);
+
             string[] text = { "Koniec rundy x", "", "Wynik: x - x"};
 
             while (roundNumber <= totalRoundNumber)
@@ -228,7 +231,7 @@ namespace KCKGame
                 isUsed[secondPlayerColumn, secondPlayerRow] = true;
 
                 WriteOnPosition(firstPlayerColumn, firstPlayerRow, '*', ConsoleColor.Blue);
-                WriteOnPosition(secondPlayerColumn, secondPlayerRow, '*', ConsoleColor.Red);
+                WriteOnPosition(secondPlayerColumn, secondPlayerRow, '*', ConsoleColor.Green);
 
                 Thread.Sleep(100);
             }
@@ -453,6 +456,26 @@ namespace KCKGame
             return false;
         }
 
+        static void MakeObstacles(int roundNumber)
+        {
+            Random random = new Random();
+
+            for (int i = 1; i <= roundNumber; i++)
+            {
+                int randomRow = random.Next(3, Console.WindowHeight - 4);
+                int randomColumn = random.Next(3, Console.WindowWidth - 4);
+
+                isUsed[randomColumn, randomRow] = true;
+                isUsed[randomColumn+1, randomRow] = true;
+                isUsed[randomColumn, randomRow+1] = true;
+                isUsed[randomColumn+1, randomRow+1] = true;
+                WriteOnPosition(randomColumn, randomRow, 'X', ConsoleColor.Red);
+                WriteOnPosition(randomColumn+1, randomRow, 'X', ConsoleColor.Red);
+                WriteOnPosition(randomColumn, randomRow+1, 'X', ConsoleColor.Red);
+                WriteOnPosition(randomColumn+1, randomRow+1, 'X', ConsoleColor.Red);
+            }
+        }
+
         static void ResetGame(ref int roundNumber)
         {
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
@@ -460,15 +483,17 @@ namespace KCKGame
             firstPlayerDirection = right;
             secondPlayerDirection = left;
 
+            roundNumber++;
+
             string text = "Naciśnij dowolny klawisz, żeby zacząć od nowa...";
             Console.CursorLeft = Console.WindowWidth / 2 - text.Length / 2;
             Console.WriteLine(text);
-            roundNumber++;
 
             Console.ReadKey();
             Thread.Sleep(250);
             Console.Clear();
 
+            MakeObstacles(roundNumber);
             MovePlayers();
         }
 
