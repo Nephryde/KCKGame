@@ -7,6 +7,16 @@ using System.Threading.Tasks;
 
 namespace KCKGame
 {
+    struct Position
+    {
+        public int row;
+        public int col;
+        public Position(int row, int col)
+        {
+            this.row = row;
+            this.col = col;
+        }
+    }
     class Program
     {
         static readonly int left = 0;
@@ -25,6 +35,8 @@ namespace KCKGame
         static int secondPlayerRow = 0;
 
         static bool[,] isUsed;
+
+        
 
         static void Main(string[] args)
         {
@@ -143,6 +155,7 @@ namespace KCKGame
 
         static void MenuStart()
         {
+
             Console.Clear();
 
             isUsed = new bool[Console.WindowWidth, Console.WindowHeight];
@@ -158,10 +171,12 @@ namespace KCKGame
             Console.ReadKey();
             Console.Clear();
 
-            int totalRoundNumber = 5;
+            int totalRoundNumber = 10;
             int roundNumber = 1;
 
+
             MakeObstacles(roundNumber);
+
 
             string[] text = { "Koniec rundy x", "", "Wynik: x - x"};
 
@@ -227,11 +242,16 @@ namespace KCKGame
                     ResetGame(ref roundNumber);
                 }
 
+                
+
                 isUsed[firstPlayerColumn, firstPlayerRow] = true;
                 isUsed[secondPlayerColumn, secondPlayerRow] = true;
 
-                WriteOnPosition(firstPlayerColumn, firstPlayerRow, '*', ConsoleColor.Blue);
-                WriteOnPosition(secondPlayerColumn, secondPlayerRow, '*', ConsoleColor.Green);
+                WriteSnakeHead();
+                
+
+                WriteOnPosition(firstPlayerColumn, firstPlayerRow, '°', ConsoleColor.DarkCyan);
+                WriteOnPosition(secondPlayerColumn, secondPlayerRow, '°', ConsoleColor.Green);
 
                 Thread.Sleep(100);
             }
@@ -460,19 +480,19 @@ namespace KCKGame
         {
             Random random = new Random();
 
-            for (int i = 1; i <= roundNumber; i++)
+            for (int i = 1; i <= roundNumber+10; i++)
             {
                 int randomRow = random.Next(3, Console.WindowHeight - 4);
-                int randomColumn = random.Next(3, Console.WindowWidth - 4);
+                int randomColumn = random.Next(10, Console.WindowWidth - 13);
 
                 isUsed[randomColumn, randomRow] = true;
                 isUsed[randomColumn+1, randomRow] = true;
                 isUsed[randomColumn, randomRow+1] = true;
                 isUsed[randomColumn+1, randomRow+1] = true;
-                WriteOnPosition(randomColumn, randomRow, 'X', ConsoleColor.Red);
-                WriteOnPosition(randomColumn+1, randomRow, 'X', ConsoleColor.Red);
-                WriteOnPosition(randomColumn, randomRow+1, 'X', ConsoleColor.Red);
-                WriteOnPosition(randomColumn+1, randomRow+1, 'X', ConsoleColor.Red);
+                WriteOnPosition(randomColumn, randomRow, '▓', ConsoleColor.Red);
+                WriteOnPosition(randomColumn+1, randomRow, '▓', ConsoleColor.Red);
+                WriteOnPosition(randomColumn, randomRow+1, '▓', ConsoleColor.Red);
+                WriteOnPosition(randomColumn+1, randomRow+1, '▓', ConsoleColor.Red);
             }
         }
 
@@ -499,9 +519,44 @@ namespace KCKGame
 
         static void WriteOnPosition(int x, int y, char ch, ConsoleColor color)
         {
+
             Console.ForegroundColor = color;
             Console.SetCursorPosition(x, y);
             Console.Write(ch);
+
+            
         }
+
+        static void WriteSnakeHead()
+        {
+            Position[] directions = new Position[]
+                {
+                    new Position(0, 1), // right
+                    new Position(0, -1), // left
+                    new Position(1, 0), // down
+                    new Position(-1, 0), // up
+                };
+
+            Position firstSnakeHead = new Position(firstPlayerRow, firstPlayerColumn);
+            Position firstPlayerNextDirection = directions[firstPlayerDirection];
+
+            Position firstSnakeNewHead = new Position(firstSnakeHead.row + firstPlayerNextDirection.row,
+                firstSnakeHead.col + firstPlayerNextDirection.col);
+
+            Console.SetCursorPosition(firstSnakeNewHead.col, firstSnakeNewHead.row);
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.Write('°');
+
+            Position secondSnakeHead = new Position(secondPlayerRow, secondPlayerColumn);
+            Position secondPlayerNextDirection = directions[secondPlayerDirection];
+
+            Position secondSnakeNewHead = new Position(secondSnakeHead.row + secondPlayerNextDirection.row,
+                secondSnakeHead.col + secondPlayerNextDirection.col);
+
+            Console.SetCursorPosition(secondSnakeNewHead.col, secondSnakeNewHead.row);
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write('°');
+        }
+        
     }
 }
